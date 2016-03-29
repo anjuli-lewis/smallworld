@@ -188,6 +188,15 @@ public class Graph {
             }
             StdOut.println();
         }
+        
+        //test the other constuctor
+        Graph a=new Graph(G);
+        StdOut.println(a);
+        a.addEdge("H", "K");
+        StdOut.println("G");
+        StdOut.println(G);
+        StdOut.println("A");
+        StdOut.println(a);
 
     }
 
