@@ -46,6 +46,20 @@ public class Graph {
     public Graph() {
         st = new ST<String, SET<String>>();
     }
+    
+    public Graph(Graph g) {
+        Iterable<String> keys=g.vertices();
+        st= new ST<>();
+        E=g.E();
+        for(String key: keys) {
+            Iterable<String> values=g.adjacentTo(key);
+            SET<String> set=new SET();
+            for(String value: values) {
+                set.add(value);
+            }
+            st.put(key,set);
+        }
+    }
 
    /**
      * Create an graph from given input stream using given delimiter.
