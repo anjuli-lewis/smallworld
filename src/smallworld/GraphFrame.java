@@ -15,19 +15,15 @@ import javax.swing.Timer;
  */
 public class GraphFrame extends JFrame {
 
-    private Timer timer;
     public static final int FRAME_WIDTH = 768;
     public static final int FRAME_HEIGHT = 768;
-    private int time;
     
     public GraphFrame(Graph g) {
-        this.time = time;
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container pane = this.getContentPane();
         GraphPanel panel = new GraphPanel(g);
         pane.add(panel);
-        timer.start();
         this.setVisible(true);
 
     }
@@ -39,7 +35,7 @@ public class GraphFrame extends JFrame {
         G.addEdge("D", "E");
         G.addEdge("D", "G");
         G.addEdge("E", "G");
-        G.addVertex("H");
+        G.addEdge("H","G");
         GraphFrame g=new GraphFrame(G);
     }
 }
