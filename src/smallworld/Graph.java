@@ -151,7 +151,6 @@ public class Graph {
         validateVertex(w);
         return st.get(v).contains(w);
     }
-
    /**
      * Return a string representation of the graph.
      */
