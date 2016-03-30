@@ -87,8 +87,6 @@ public class PathFinderClient {
     public static void main(String[] args) {
         String filename  = args[0];
         String delimiter = args[1];
-        System.out.println(filename);
-        System.out.println(delimiter);
         In in = new In(filename); 
         Graph G = GraphGenerator.read(in, delimiter);
         String s = args[2];
