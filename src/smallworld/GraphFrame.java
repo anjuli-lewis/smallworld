@@ -31,11 +31,11 @@ public class GraphFrame extends JFrame {
         Graph G = new Graph();
         G.addEdge("A", "B");
         G.addEdge("A", "C");
-        G.addEdge("C", "D");
-        G.addEdge("D", "E");
-        G.addEdge("D", "G");
-        G.addEdge("E", "G");
-        G.addEdge("H","G");
+        G.addEdge("A", "D");
+        G.addEdge("A", "E");
+        G.addEdge("E", "F");
+        G.addEdge("F", "G");
+        G.addEdge("G","H");
         GraphFrame g=new GraphFrame(G);
     }
 }
