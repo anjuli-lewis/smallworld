@@ -24,11 +24,12 @@ import javax.swing.JPanel;
  */
 public class GraphPanel extends JPanel {
 
-    private Graph graph;
-    private double radius = .05;
-    private double outerRadius=radius*4;
+    private final Graph graph;
+    private final double radius = .05;
+    private final double outerRadius=.5;
     private TreeMap<String, LocationNode> locations;
     private ArrayList<String> lines;
+    private int size=0;
 
     public GraphPanel(Graph g) {
         graph = g;
@@ -57,7 +58,6 @@ public class GraphPanel extends JPanel {
             g2d.fill(s);
         }
         for(String line:lines) {
-            GeneralPath path = new GeneralPath();
             String[] points=line.split("/");
             String [] p0=points[0].split(":");
             String [] p1=points[1].split(":");
@@ -71,8 +71,8 @@ public class GraphPanel extends JPanel {
         ArrayList<String> inLocs = new ArrayList<>(graph.V());
         double center = 0;
         double neg = 0;
-        int size=inLocs.size();
-        while (size<=graph.V()) {
+        size=0;
+        while (size<graph.V()) {
             Iterable<String> keys = graph.vertices();
             int max = -1;
             String maxKey = "";
@@ -85,51 +85,85 @@ public class GraphPanel extends JPanel {
             String centerPoint;
             LocationNode loc;
             if (neg % 2 == 0) {
-                loc = new LocationNode(center+radius, center+radius);
-                center += .1;
+                loc = new LocationNode(center, center);
                 centerPoint = center + ":" + center;
             } else {
                 double newCenter = center * -1;
-                loc = new LocationNode(newCenter+radius, newCenter+radius);
+                loc = new LocationNode(newCenter, newCenter);
                 centerPoint = newCenter + ":" + newCenter;
             }
             neg++;
+            center += .1;
             locations.put(maxKey, loc);
             inLocs.add(maxKey);
-            //System.out.println(maxKey);
-            Iterable<String> links = graph.adjacentTo(maxKey);
-            double angle = (2 * Math.PI) / max;
-            for (String link : links) {
-                String otherLoc = "";
-                if (inLocs.contains(link)) {
-                    Set<String> k = locations.keySet();
-                    for (String key : k) {
-                        if (key.equals(link)) {
-                            LocationNode locNode = locations.get(key);
-                            otherLoc = locNode.getX() + ":" + locNode.getY();
-                        }
-                    }
-                } else {
-                    double c;
-                    if (neg % 2 != 0) {
-                        c = center * -1;
-                    } else {
-                        c = center;
-                    }
-                    double x = c + outerRadius * Math.cos(angle);
-                    double y = c + outerRadius * Math.sin(angle);
-                    locations.put(link, new LocationNode(x, y));
-                    inLocs.add(link);
-                    otherLoc = x + ":" + y;
-                }
-                String line = centerPoint + "/" + otherLoc;
-                lines.add(line);
-                angle+=angle;
-                if(angle>Math.PI*2) {
-                    angle=Math.PI*2;
-                }
+            circleWithCenter(maxKey);
+            
+            size++;
+        }
+//        ArrayList<String> nodes=new ArrayList<>(graph.V());
+//        Iterable<String> keys=graph.vertices();
+//        for(String key: keys) {
+//            nodes.add(key);
+//        }
+//        circleNoCenter(nodes, nodes.size());
+    }
+    private void circleWithCenter(String key) {
+        LocationNode loc=locations.get(key);
+        Iterable<String> nodes=graph.adjacentTo(key);
+        double angle=0;
+        double angleIncrease=360/graph.degree(key);
+        double x;
+        double y;
+        LocationNode n;
+        for(String node:nodes) {
+            if(!locations.containsKey(node)) {
+                do {
+                    x = loc.getX() + outerRadius * Math.cos(angle);
+                    y = loc.getY() + outerRadius * Math.sin(angle);
+                    angle+=angleIncrease;
+                    n=new LocationNode(x,y);
+                } while(locations.containsValue(n));
+                locations.put(node,n);
+                size++;
             }
-            size=inLocs.size();
+            else {
+                n=locations.get(node);
+            }
+            String p0=loc.getX()+":"+loc.getY();
+            String p1=n.getX()+":"+n.getY();
+            String line=p0+"/"+p1;
+            lines.add(line);
         }
     }
+    
+    private void circleNoCenter(ArrayList<String> nodes) {
+        LocationNode loc=new LocationNode(0,0);
+        double angle=0;
+        double angleIncrease=360/nodes.size();
+        double x;
+        double y;
+        LocationNode n;
+        for(String node:nodes) {
+            if(!locations.containsKey(node)) {
+                do {
+                    x = loc.getX() + outerRadius * Math.cos(angle);
+                    y = loc.getY() + outerRadius * Math.sin(angle);
+                    System.out.println(angle);
+                    angle+=angleIncrease;
+                    n=new LocationNode(x,y);
+                } while(locations.containsValue(n));
+                locations.put(node,n);
+                size++;
+            }
+            else {
+                n=locations.get(node);
+            }
+            /*String p0=loc.getX()+":"+loc.getY();
+            String p1=n.getX()+":"+n.getY();
+            String line=p0+"/"+p1;
+            lines.add(line);*/
+        }
+    }
+    
+    
 }
