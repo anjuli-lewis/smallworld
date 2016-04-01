@@ -8,9 +8,10 @@ package smallworld;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import static java.lang.Double.parseDouble;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import javax.swing.JPanel;
  *
  * @author alewis19
  */
-public class GraphPanel extends JPanel {
+public class GraphPanel extends JPanel implements MouseListener{
 
     private final Graph graph;
     private final double radius = .05;
@@ -52,7 +53,7 @@ public class GraphPanel extends JPanel {
         Set<String> keys=locations.keySet();
         for(String key: keys) {
             LocationNode n=locations.get(key);
-            Shape e=new Ellipse2D.Double(n.getX(),n.getY(),radius,radius);
+            Shape e=new Ellipse2D.Double(n.getX()-radius/2,n.getY()-radius/2,radius,radius);
             Shape s=transform.createTransformedShape(e);
             g2d.fill(s);
         }
@@ -150,6 +151,37 @@ public class GraphPanel extends JPanel {
                 }
             }
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Set<String> keys=locations.keySet();
+        int x=e.getX();
+        int y=e.getY();
+        System.out.println(x+", "+y);
+        for(String key:keys) {
+            LocationNode n=locations.get(key);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        System.out.println("Released");
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        
     }
     
 }
