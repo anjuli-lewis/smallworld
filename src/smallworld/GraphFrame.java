@@ -7,7 +7,6 @@ package smallworld;
 
 import java.awt.Container;
 import javax.swing.JFrame;
-import javax.swing.Timer;
 
 /**
  *
@@ -29,13 +28,25 @@ public class GraphFrame extends JFrame {
     }
     public static void main(String[] args) {
         Graph G = new Graph();
+        //two centers
+//        G.addEdge("A", "B");
+//        G.addEdge("A", "C");
+//        G.addEdge("F", "D");
+//        G.addEdge("F", "E");
+        //one center
         G.addEdge("A", "B");
         G.addEdge("A", "C");
         G.addEdge("A", "D");
         G.addEdge("A", "E");
-        G.addEdge("E", "F");
-        G.addEdge("F", "G");
-        G.addEdge("G","H");
+        G.addEdge("A", "F");
+        G.addEdge("A", "G");
+        //no center
+//        G.addEdge("A", "B");
+//        G.addEdge("B", "C");
+//        G.addEdge("C", "D");
+//        G.addEdge("D", "E");
+//        G.addEdge("E", "F");
+//        G.addEdge("F", "G");
         GraphFrame g=new GraphFrame(G);
     }
 }
