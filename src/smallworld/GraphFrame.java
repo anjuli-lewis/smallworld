@@ -23,6 +23,7 @@ public class GraphFrame extends JFrame {
         Container pane = this.getContentPane();
         GraphPanel panel = new GraphPanel(g);
         pane.add(panel);
+        addMouseListener(panel);
         this.setVisible(true);
 
     }
