@@ -29,7 +29,6 @@ public class GraphPanel extends JPanel {
     private final double outerRadius=.5;
     private TreeMap<String, LocationNode> locations;
     private ArrayList<String> lines;
-    private int size=0;
 
     public GraphPanel(Graph g) {
         graph = g;
@@ -57,6 +56,7 @@ public class GraphPanel extends JPanel {
             Shape s=transform.createTransformedShape(e);
             g2d.fill(s);
         }
+        generateLines();
         for(String line:lines) {
             String[] points=line.split("/");
             String [] p0=points[0].split(":");
@@ -67,7 +67,7 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    public void circlePaint() {
+    private void circlePaint() {
         ArrayList<String> inLocs = new ArrayList<>(graph.V());
         double center = 0;
         double neg = 0;
@@ -84,22 +84,12 @@ public class GraphPanel extends JPanel {
                     nodes.add(key);
                 }
             }
-            String centerPoint;
-            LocationNode loc;
-            if (neg % 2 == 0) {
-                loc = new LocationNode(center, center);
-                centerPoint = center + ":" + center;
-            } else {
-                double newCenter = center * -1;
-                loc = new LocationNode(newCenter, newCenter);
-                centerPoint = newCenter + ":" + newCenter;
-            }
-            locations.put(maxKey, loc);
-            inLocs.add(maxKey);
             if(nodes.size()>1) {
                 circleNoCenter(nodes);
             }
             else {
+                LocationNode loc=new LocationNode(0,0);
+                locations.put(maxKey,loc);
                 circleWithCenter(maxKey);
             }
     }
@@ -120,17 +110,6 @@ public class GraphPanel extends JPanel {
                     n=new LocationNode(x,y);
                 } while((x>1-radius*2)||(x<-1)||(y>1-radius*2)||(y<-1)||locations.containsValue(n));
                 locations.put(node,n);
-                size++;
-            }
-            else {
-                n=locations.get(node);
-            }
-            String p0=loc.getX()+":"+loc.getY();
-            String p1=n.getX()+":"+n.getY();
-            String line=p0+"/"+p1;
-            String line2=p1+"/"+p0;
-            if(!lines.contains(line)&&!lines.contains(line2)) {
-                lines.add(line);
             }
         }
     }
@@ -147,26 +126,30 @@ public class GraphPanel extends JPanel {
                 do {
                     x = loc.getX() + outerRadius * Math.cos(angle);
                     y = loc.getY() + outerRadius * Math.sin(angle);
-                    System.out.println(angle);
                     angle+=angleIncrease;
                     n=new LocationNode(x,y);
                 } while(x>1||x<-1||y>1||y<-1||locations.containsValue(n));
                 locations.put(node,n);
-                size++;
             }
-            else {
-                n=locations.get(node);
-            }
-            String p0=loc.getX()+":"+loc.getY();
-            String p1=n.getX()+":"+n.getY();
-            String line=p0+"/"+p1;
-            String line2=p1+"/"+p0;
-            if(!lines.contains(line)&&!lines.contains(line2)) {
-                lines.add(line);
-            }
+        }
+        for(String node:nodes) {
             circleWithCenter(node);
         }
     }
-    
+    private void generateLines() {
+        Set<String> keys=locations.keySet();
+        for(String key:keys) {
+            Iterable<String> adjacent=graph.adjacentTo(key);
+            for(String a:adjacent) {
+                LocationNode p0=locations.get(key);
+                LocationNode p1=locations.get(a);
+                String line=p0.getX()+":"+p0.getY()+"/"+p1.getX()+":"+p1.getY();
+                String line2=p1.getX()+":"+p1.getY()+"/"+p0.getX()+":"+p0.getY();
+                if(!lines.contains(line)&&!lines.contains(line2)) {
+                    lines.add(line);
+                }
+            }
+        }
+    }
     
 }
