@@ -20,21 +20,33 @@ import java.util.TreeMap;
 import javax.swing.JPanel;
 
 /**
- *
+ * Draws the graph by finding the node with the most connections, placing that in 
+ * the center and then placing all the nodes equal distances from the center node
+ * in a circle, then it goes to each of the nodes connected to the center node, 
+ * and if that node has more one connection, treats that as another center node.
+ * If there is no center node, it places all the nodes with equal connections in
+ * a circle centered at the origin.
  * @author alewis19
  */
 public class GraphPanel extends JPanel {
 
-    private final Graph graph;
-    private double diameter;
-    private final double outerRadius;
-    private TreeMap<String, LocationNode> locations;
-    private ArrayList<String> lines;
-    private final String origin;
-    private final String destination;
-    private final Color pathColor = new Color(0, 13, 206);
-    private final Color connectColor = new Color(25, 25, 25);
+    private final Graph graph; /** the graph to be displayed */
+    private double diameter; /** the diameter of the circles */
+    private final double outerRadius; /** the radius of the outer circle */
+    private TreeMap<String, Location> locations; /** the locations of all the circle*/
+    private ArrayList<String> lines; /** the start and end points for all the lines */
+    private final String origin; /** the start point for a highlighted path */
+    private final String destination; /** the end point for a highlighted path */
+    private final Color pathColor = new Color(0, 13, 206); /** the color of a path */
+    private final Color connectColor = new Color(25, 25, 25); /** 
+     * the color of a connection not a part of the path */
 
+    /**
+     * Creates a Graph panel with a origin and destination for the path finder
+     * @param g the Graph to be used in this panel
+     * @param origin
+     * @param destination 
+     */
     public GraphPanel(Graph g, String origin, String destination) {
         graph = g;
         locations = new TreeMap<>();
@@ -49,7 +61,10 @@ public class GraphPanel extends JPanel {
         this.origin = origin;
         this.destination = destination;
     }
-
+/**
+ * Creates a GraphPanel that will not highlight a set path
+ * @param g 
+ */
     public GraphPanel(Graph g) {
         graph = g;
         locations = new TreeMap<>();
@@ -60,7 +75,10 @@ public class GraphPanel extends JPanel {
         this.origin = null;
         this.destination = null;
     }
-
+/**
+ * Draws the graph
+ * @param g 
+ */
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -76,7 +94,7 @@ public class GraphPanel extends JPanel {
         this.circlePaint();
         Set<String> keys = locations.keySet();
         for (String key : keys) {
-            LocationNode n = locations.get(key);
+            Location n = locations.get(key);
             Shape e = new Ellipse2D.Double(n.getX() - diameter / 2, n.getY() - diameter / 2, diameter, diameter);
             Shape s = transform.createTransformedShape(e);
             g2d.fill(s);
@@ -115,7 +133,9 @@ public class GraphPanel extends JPanel {
             g2d.setColor(connectColor);
         }
     }
-
+/**
+ * Figures out if the graph has a center point or not and passes to the appropiate method
+ */
     private void circlePaint() {
         ArrayList<String> inLocs = new ArrayList<>(graph.V());
         double center = 0;
@@ -136,28 +156,32 @@ public class GraphPanel extends JPanel {
         if (nodes.size() > 1) {
             circleNoCenter(nodes);
         } else {
-            LocationNode loc = new LocationNode(0, 0);
+            Location loc = new Location(0, 0);
             locations.put(maxKey, loc);
             circleWithCenter(maxKey);
         }
     }
-
+/**
+ * Generates one layer of the graph from the given center node. Goes through each 
+ * node, treating it as a center node
+ * @param key 
+ */
     private void circleWithCenter(String key) {
         if (locations.size() != graph.V()) {
-            LocationNode loc = locations.get(key);
+            Location loc = locations.get(key);
             Iterable<String> nodes = graph.adjacentTo(key);
             double angle = 0;
             double angleIncrease = (Math.PI * 2) / graph.degree(key);
             double x;
             double y;
-            LocationNode n;
+            Location n;
             for (String node : nodes) {
                 if (!locations.containsKey(node)) {
                     do {
                         x = loc.getX() + outerRadius * Math.cos(angle);
                         y = loc.getY() + outerRadius * Math.sin(angle);
                         angle += angleIncrease;
-                        n = new LocationNode(x, y);
+                        n = new Location(x, y);
                     } while ((x < 1-diameter/2) && (x > -1) && (y > 1 - diameter/2) && (y < -1) && !locations.containsValue(n));
                     locations.put(node, n);
                 }
@@ -176,19 +200,19 @@ public class GraphPanel extends JPanel {
     }
 
     private void circleNoCenter(ArrayList<String> nodes) {
-        LocationNode loc = new LocationNode(0, 0);
+        Location loc = new Location(0, 0);
         double angle = 0;
         double angleIncrease = (Math.PI * 2) / nodes.size();
         double x;
         double y;
-        LocationNode n;
+        Location n;
         for (String node : nodes) {
             if (!locations.containsKey(node)) {
                 do {
                     x = outerRadius * Math.cos(angle);
                     y = outerRadius * Math.sin(angle);
                     angle += angleIncrease;
-                    n = new LocationNode(x, y);
+                    n = new Location(x, y);
                 } while ((x > 1 - diameter) && (x < -1) && (y > 1 - diameter) && (y < -1) && !locations.containsValue(n));
                 locations.put(node, n);
             }
@@ -210,8 +234,8 @@ public class GraphPanel extends JPanel {
         for (String key : keys) {
             Iterable<String> adjacent = graph.adjacentTo(key);
             for (String a : adjacent) {
-                LocationNode p0 = locations.get(key);
-                LocationNode p1 = locations.get(a);
+                Location p0 = locations.get(key);
+                Location p1 = locations.get(a);
                 String line = p0.getX() + ":" + p0.getY() + "/" + p1.getX() + ":" + p1.getY();
                 String line2 = p1.getX() + ":" + p1.getY() + "/" + p0.getX() + ":" + p0.getY();
                 if (!lines.contains(line) && !lines.contains(line2)) {
