@@ -23,7 +23,6 @@ public class GraphFrame extends JFrame {
         Container pane = this.getContentPane();
         GraphPanel panel = new GraphPanel(g);
         pane.add(panel);
-        addMouseListener(panel);
         this.setVisible(true);
 
     }
@@ -35,19 +34,20 @@ public class GraphFrame extends JFrame {
 //        G.addEdge("F", "D");
 //        G.addEdge("F", "E");
         //one center
-//        G.addEdge("A", "B");
-//        G.addEdge("A", "C");
-//        G.addEdge("A", "D");
-//        G.addEdge("A", "E");
-//        G.addEdge("A", "F");
-        G.addEdge("A", "G");
-        //no center
         G.addEdge("A", "B");
-        G.addEdge("B", "C");
-        G.addEdge("C", "D");
-        G.addEdge("D", "E");
-        G.addEdge("E", "F");
-        G.addEdge("F", "G");
+        G.addEdge("A", "C");
+        G.addEdge("A", "D");
+        G.addEdge("A", "E");
+        G.addEdge("A", "F");
+        G.addEdge("A", "G");
+        G.addEdge("B", "H");
+        //no center
+//        G.addEdge("A", "B");
+//        G.addEdge("B", "C");
+//        G.addEdge("C", "D");
+//        G.addEdge("D", "E");
+//        G.addEdge("E", "F");
+//        G.addEdge("F", "G");
         GraphFrame g=new GraphFrame(G);
     }
 }
